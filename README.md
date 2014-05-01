@@ -5,9 +5,13 @@ A Clojure library designed to provide the simplest form of durable [Ring][ring]
 session store][memory.clj] with the `atom` replaced by Alan Dipert's durable
 [enduro][enduro] `file-atom`.
 
+[![Build Status](https://travis-ci.org/simlun/enduro-session.svg?branch=master)](https://travis-ci.org/simlun/enduro-session)
+
+
 ## Usage
 
 FIXME
+
 
 ## License
 
