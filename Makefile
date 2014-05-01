@@ -2,7 +2,7 @@
 
 export PATH := $(shell pwd)/scripts:$(shell pwd)/scripts/lib:$(PATH)
 # Try to use lein2 but fall back on lein (because Travis CI calls it lein2):
-LEIN := $(shell [[ -x `which lein2` ]] && echo lein2 || echo lein)
+LEIN := $(shell (which lein2 >/dev/null 2>&1) && echo lein2 || echo lein)
 CLJ := $(shell find . -name '*.clj')
 
 all: debug test system-test
