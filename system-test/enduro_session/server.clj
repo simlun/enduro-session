@@ -3,7 +3,7 @@
   (:use clojure.pprint
         ring.util.response
         ring.adapter.jetty
-        ring.middleware.session))
+        simlun.enduro-session))
 
 (defn log
   [& messages]
@@ -21,4 +21,4 @@
 (defn -main
   [port]
   (log "Starting system test web server on port" port)
-  (run-jetty (wrap-session handler) {:port (Integer. port)}))
+  (run-jetty (wrap-enduro-session handler) {:port (Integer. port)}))

@@ -10,7 +10,20 @@ session store][memory.clj] with the `atom` replaced by Alan Dipert's durable
 
 ## Usage
 
-FIXME
+Dependency:
+
+    [simlun/enduro-session "0.1.0"]
+
+Ring middleware:
+
+    (use 'ring.adapter.jetty
+         '[simlun.enduro-session :only [wrap-enduro-session]])
+
+    (defn handler [request]
+    ; ...
+    )
+
+    (run-jetty (wrap-enduro-session handler) {:port 3000}))
 
 
 ## Development

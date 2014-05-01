@@ -1,13 +1,7 @@
 #!/bin/bash -e
 
-# OPTIONS
-#########
-
-CURL_COOKIE_JAR=target/curl-cookie-jar.txt
-
-
 # FUNCTIONS
-###########
+############
 
 function log {
     echo "$0> $@"
@@ -15,9 +9,6 @@ function log {
 
 function setup {
     log "Setting up test harness"
-
-    log "Emptying the curl cookie jar"
-    echo > $CURL_COOKIE_JAR
 
     HTTP_PORT=$(get-unused-tcp-port)
     log "Using HTTP port $HTTP_PORT"
@@ -49,10 +40,19 @@ function failfast {
 }
 
 
+# CURL OPTIONS AND SETUP
+#########################
+
+CURL_COOKIE_JAR=target/curl-cookie-jar.txt
+log "Emptying the curl cookie jar"
+echo > $CURL_COOKIE_JAR
+
+
 # TESTS
-#######
+########
 
 echo
+echo "Test:"
 echo "Session state is persisted across requests?"
 echo "########################################################################"
 
@@ -73,9 +73,18 @@ http get $SERVER_URL and_in_response_expect "data expected to be stored in the s
 teardown
 
 echo
+echo "Test:"
 echo "Session state is persisted, even though the server process is restarted?"
 echo "########################################################################"
 
-echo TODO
+# Restart the test server in the background, etc
+setup
 
+# Now verify that the data is still stored in the session by yet another GET
+http get $SERVER_URL and_in_response_expect "data expected to be stored in the session" || failfast
+
+# Finally stop the test server
+teardown
+
+log "All system tests passed!"
 exit 0
