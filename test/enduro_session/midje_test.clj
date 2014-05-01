@@ -1,4 +1,4 @@
-(ns enduro-session.core-test
+(ns enduro-session.midje-test
   (:use midje.sweet))
 
 (fact "Midje works"
