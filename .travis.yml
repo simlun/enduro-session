@@ -3,4 +3,6 @@ lein: lein2
 jdk:
   - openjdk7
   - oraclejdk7
-script: lein2 midje
+script:
+  - lein2 midje
+  - scripts/system-tests
