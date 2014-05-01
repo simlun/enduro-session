@@ -56,10 +56,20 @@ echo
 echo "Session state is persisted across requests?"
 echo "########################################################################"
 
+# Start test server in the background, etc
 setup
+
+# A HTTP GET from the server will respond the current session data structure,
+# it should be empty from the start
 http get $SERVER_URL and_in_response_expect "{}" || failfast
+
+# A HTTP POST to the server will store the data in the session data structure
 http post "data expected to be stored in the session" $SERVER_URL || failfast
+
+# Now verify that the data was properly stored in the session by another GET
 http get $SERVER_URL and_in_response_expect "data expected to be stored in the session" || failfast
+
+# Stop the test server
 teardown
 
 echo
