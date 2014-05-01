@@ -13,6 +13,12 @@ session store][memory.clj] with the `atom` replaced by Alan Dipert's durable
 FIXME
 
 
+## Development
+
+Run tests using [Midje][midje]: `$ lein midje` or automatically on source code file
+change: `$ lein midje :autotest`.
+
+
 ## License
 
 Copyright © 2014 Simon Lundmark
@@ -25,3 +31,4 @@ option) any later version.
 [store.clj]: https://github.com/ring-clojure/ring/blob/1.2.1/ring-core/src/ring/middleware/session/store.clj
 [memory.clj]: https://github.com/ring-clojure/ring/blob/1.2.1/ring-core/src/ring/middleware/session/memory.clj
 [enduro]: https://github.com/alandipert/enduro
+[midje]: https://github.com/marick/Midje

@@ -1,7 +1,5 @@
 (ns enduro-session.core-test
-  (:require [clojure.test :refer :all]
-            [enduro-session.core :refer :all]))
+  (:use midje.sweet))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 1 1))))
+(fact "Midje works"
+  (+ 1 1) => 2)
