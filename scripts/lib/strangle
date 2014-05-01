@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# Like kill(1) but wait for the process(es) to die
+
+for PID in "$@"; do
+    echo "$0> Strangling PID $PID..."
+    kill $PID
+    wait-to-die $PID
+done

@@ -15,8 +15,7 @@ FIXME
 
 ## Development
 
-Run tests using [Midje][midje]: `$ lein midje` or automatically on source code file
-change: `$ lein midje :autotest`.
+The main entry point is the `Makefile` which will run all tests on `$ make`.
 
 
 ## License

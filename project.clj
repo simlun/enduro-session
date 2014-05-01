@@ -6,4 +6,9 @@
   :dependencies [[org.clojure/clojure "1.5.1"]]
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[midje "1.6.3"]]
-                   :plugins [[lein-midje "3.1.3"]]}})
+                   :plugins [[lein-midje "3.1.3"]]}
+             :system-test {:dependencies [[ring "1.2.1"]
+                                          [javax.servlet/servlet-api "2.5"]]
+                           :main enduro-session.server
+                           :source-paths ["system-test"]
+                           :uberjar-name "system-test-server.jar"}})

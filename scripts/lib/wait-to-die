@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+# Wait for processes with the given PIDs to die
+
+for PID in "$@"; do
+    echo "$0> Waiting for PID $PID to die..."
+    while kill -0 "$PID" 2>/dev/null; do
+        sleep 0.05
+    done
+    echo "$0> RIP $PID"
+done

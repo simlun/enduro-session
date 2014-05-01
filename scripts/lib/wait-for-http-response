@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Useful when waiting for a web server to start
+
+URL="$1"
+NUM_TRIES=5
+
+echo "$0> Waiting for an OK HTTP response..."
+wget --no-verbose --retry-connrefused \
+     --tries=$NUM_TRIES -O /dev/null $URL
+WGET_STATUS=$?
+if [ "$WGET_STATUS" != "0" ]; then
+    echo "$0> Timed out while waiting for HTTP response"
+    exit 1
+fi
+echo "$0> Server responded"
