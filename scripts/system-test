@@ -1,43 +1,105 @@
 #!/bin/bash -e
 
-function setup {
-    echo "$0> Setting up test harness"
-    HTTP_PORT=$(get-unused-tcp-port)
-    echo "$0> Using HTTP port $HTTP_PORT"
+# OPTIONS
+#########
 
-    echo "$0> Starting system test server as a background process"
+CURL_COOKIE_JAR=target/curl-cookie-jar.txt
+CURL_FLAGS="--cookie $CURL_COOKIE_JAR --cookie-jar $CURL_COOKIE_JAR -sS"
+
+
+# FUNCTIONS
+###########
+
+function log {
+    echo "$0> $@"
+}
+
+function setup {
+    log "Setting up test harness"
+
+    log "Emptying the curl cookie jar"
+    echo > $CURL_COOKIE_JAR
+
+    HTTP_PORT=$(get-unused-tcp-port)
+    log "Using HTTP port $HTTP_PORT"
+
+    log "Starting system test server as a background process"
     java -jar target/system-test-server.jar $HTTP_PORT &
     SERVER_PID=$!
-    echo "$0> Server PID: $SERVER_PID"
+    log "Server PID: $SERVER_PID"
 
     SERVER_URL="http://localhost:${HTTP_PORT}/"
-    echo "$0> Server URL: $SERVER_URL"
+    log "Server URL: $SERVER_URL"
 
     wait-for-http-response $SERVER_URL
+    log "Test harness done"
+    echo; echo
 }
 
 function teardown {
-    echo "$0> Tearing down test harness"
+    echo; echo
+    log "Tearing down test harness"
     strangle $SERVER_PID
+    log "Teardown done"
 }
 
+function failfast {
+    log "TEST FAILED"
+    teardown
+    exit 1
+}
+
+function http_post {
+    DATA="$1"
+    URL="$2"
+    log "HTTP POST $URL"
+    log "curl {"
+    curl $CURL_FLAGS -X POST -d "$DATA" $URL
+    log "}"
+}
+
+function http_get {
+    URL="$1"
+    log "HTTP GET $URL"
+    log "curl {"
+    RESPONSE=$(curl $CURL_FLAGS $URL)
+    log "}"
+    log "HTTP response body {"
+    echo "$RESPONSE"
+    log "}"
+
+    if [[ "$2" == "and_in_response_expect" ]]; then
+        EXPECTED="$3"
+        MATCH=$(echo "$RESPONSE" | grep "$EXPECTED" >/dev/null && echo yes || echo no)
+        [ $MATCH == "no" ] && (
+            log "Fail! Expected {"
+            echo "$EXPECTED"
+            log "} to be found in {"
+            echo "$RESPONSE"
+            log "}"
+            failfast)
+        [ $MATCH == "yes" ] && log "Success! Expected data was found in the HTTP response body"
+    fi
+}
+
+
+# TESTS
+#######
 
 echo
 echo "Session state is persisted across requests?"
 echo "########################################################################"
 
 setup
-
-echo TODO execute some tests here
-
+http_get $SERVER_URL and_in_response_expect "{}"
+http_post "data expected to be stored in the session" $SERVER_URL
+http_get $SERVER_URL and_in_response_expect "data expected to be stored in the session"
 teardown
-
 
 echo
 echo "Session state is persisted, even though the server process is restarted?"
 echo "########################################################################"
 
 echo TODO
-
 
 exit 0
