@@ -1,0 +1,61 @@
+#!/bin/bash -e
+
+# OPTIONS
+#########
+
+CURL_COOKIE_JAR=target/curl-cookie-jar.txt
+CURL_FLAGS="--cookie $CURL_COOKIE_JAR --cookie-jar $CURL_COOKIE_JAR -sS"
+
+
+# FUNCTIONS
+###########
+
+function log {
+    echo "$0> $@"
+}
+
+function post {
+    DATA="$1"
+    URL="$2"
+    log "HTTP POST $URL"
+    log "curl {"
+    curl $CURL_FLAGS -X POST -d "$DATA" $URL
+    log "}"
+}
+
+function get {
+    URL="$1"
+    log "HTTP GET $URL"
+    log "curl {"
+    RESPONSE=$(curl $CURL_FLAGS $URL)
+    log "}"
+    log "HTTP response body {"
+    echo "$RESPONSE"
+    log "}"
+
+    if [[ "$2" == "and_in_response_expect" ]]; then
+        EXPECTED="$3"
+        MATCH=$(echo "$RESPONSE" | grep "$EXPECTED" >/dev/null && echo yes || echo no)
+        [ $MATCH == "no" ] && (
+            log "Fail! Expected {"
+            echo "$EXPECTED"
+            log "} to be found in {"
+            echo "$RESPONSE"
+            log "}"
+            exit 1)
+        [ $MATCH == "yes" ] && log "Success! Expected data was found in the HTTP response body"
+    fi
+}
+
+
+# MAIN
+######
+
+METHOD="$1"
+shift
+
+if [[ $METHOD == "get" ]]; then
+    get "$@"
+elif [[ $METHOD == "post" ]]; then
+    post "$@"
+fi
